@@ -37,10 +37,10 @@ form {
 label {
   display: flex;
   flex-direction: column;
-  margin-bottom: 1px;
+  margin-bottom: 1em;
 }
 
-label {
+label span{
   margin-bottom: .3em;
   font-weight: bold;
   text-align: left;
