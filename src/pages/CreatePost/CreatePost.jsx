@@ -1,17 +1,51 @@
 import { useState } from 'react';
 import styles from './CreatePost.module.css'
+import { useInsertDocument } from '../../hooks/useInsertDocument';
+import { useAuthContext } from '../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const CreatePost = () => {
+  const navigate = useNavigate();
+
   const [title, setTitle] = useState('');
   const [image, setImage] = useState('');
   const [body, setBody] = useState('');
   const [tags, setTags] = useState([]);
   const [formError, setFormError] = useState('');
 
-  // const { error, loading } =
+  const { user } = useAuthContext();
 
-  const handleSubmit = (e) => {
+  const { insertDocument, response } = useInsertDocument("posts");
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setFormError('');
+
+    try {
+      new URL(image);
+    } catch (error) {
+      setFormError('A imagem precisa ser uma URL.');
+    }
+
+    const tagsArray = tags.split(',').map((tag) => tag.trim().toLowerCase());
+    console.log(tagsArray)
+
+    if(!title || !image || !tags || !body) {
+      setFormError('Por favor, preencha todos os campos.');
+    }
+
+    if (formError) return;
+
+    insertDocument({
+      title,
+      image,
+      body,
+      tagsArray,
+      uid: user.uid,
+      createdBy: user.displayName
+    });
+
+    navigate("/");
   }
 
   return (
@@ -24,7 +58,7 @@ const CreatePost = () => {
           <input 
             type="text" 
             name='title' 
-            required 
+            required
             placeholder='Pense em um bom título...' 
             onChange={(e) => setTitle(e.target.value)} 
             value={title}
@@ -62,14 +96,14 @@ const CreatePost = () => {
             value={tags}
           />
         </label>
-        <button className='btn'>Criar</button>
-        {/* {!loading && <button className='btn'>Criar</button>}
-        {loading && (
+        {!response.loading && <button className='btn'>Cadastrar</button>}
+        {response.loading && (
           <button className='btn' disabled>
             Aguarde...
           </button>
         )}
-        {error && <p className='error'>{error}</p>} */}
+        {response.error && <p className='error'>{response.error}</p>}
+        {formError && <p className='error'>{formError}</p>}
       </form>
     </div>
   )
