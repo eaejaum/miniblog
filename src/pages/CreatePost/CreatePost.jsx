@@ -28,7 +28,6 @@ const CreatePost = () => {
     }
 
     const tagsArray = tags.split(',').map((tag) => tag.trim().toLowerCase());
-    console.log(tagsArray)
 
     if(!title || !image || !tags || !body) {
       setFormError('Por favor, preencha todos os campos.');
