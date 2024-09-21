@@ -9,7 +9,7 @@ import {
 } from 'firebase/firestore';
 
 export const useFetchDocuments = (docCollection, search = null, uid = null) => {
-    const [document, setDocument] = useState(null);
+    const [documents, setDocuments] = useState(null);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
 
@@ -33,7 +33,7 @@ export const useFetchDocuments = (docCollection, search = null, uid = null) => {
 
                 await onSnapshot(q, (querySnapshot) => {
 
-                    setDocument(
+                    setDocuments(
                         querySnapshot.docs.map((doc) => ({
                             id: doc.id,
                             ...doc.data(),
@@ -55,5 +55,5 @@ export const useFetchDocuments = (docCollection, search = null, uid = null) => {
         return () => setCancelled(true);
     }, []);
 
-  return { document, loading, error }
+  return { documents, loading, error }
 }
